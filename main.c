@@ -159,7 +159,9 @@ int main(void)
   udp_slave_init();
 	
   //HAL_TIM_Base_Start_IT(&htim2);
-	
+	target_time.TimeStampHigh = 30;
+	target_time.TimeStampLow = 0;
+	load_target_time(&target_time);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -191,7 +193,7 @@ void SystemClock_Config(void)
     */
   __HAL_RCC_PWR_CLK_ENABLE();
 
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
 
     /**Initializes the CPU, AHB and APB busses clocks 
     */
@@ -200,7 +202,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 200;
+  RCC_OscInitStruct.PLL.PLLN = 100;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -221,10 +223,10 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_6) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
@@ -367,7 +369,7 @@ void ptp_start(void)
 	//assert_param(IS_ETH_PTP_UPDATE(UpdateMethod));
 	ETH->MACIMR |=  0x200;  // disable timestamp trigger interrupt generation
   ETH-> PTPTSCR |= 0x00000001;   // enable ptp time stamping
-	ETH-> PTPSSIR = 5;     // sub_second increment register  0XA:FOR 96MHZ
+	ETH-> PTPSSIR = 10;     // sub_second increment register  0XA:FOR 96MHZ
 													// : 5 FOR 216MHZ
 	
 	ETH->PTPTSCR |= 0x00000200; // sub_second reg overflow when recieve 999 999 999
@@ -551,9 +553,9 @@ void udp_receive_callback(void *arg, struct udp_pcb *udpc, struct pbuf *p, const
 				//delay = ((t2-t1) + (t4-t3))/2;
 				//HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_7);
 				
-				target_time.TimeStampHigh = ETH->PTPTSHR;
-				target_time.TimeStampLow = (ETH->PTPTSLR) + 50000 ; //first 30000-- 40 * -  100 *
-				load_target_time(&target_time);
+				/*target_time.TimeStampHigh = ETH->PTPTSHR;
+				target_time.TimeStampLow = (ETH->PTPTSLR) + 68000 ; //first 30000-- 40 * -  100 *
+				load_target_time(&target_time);*/
 				s3cnt++;
 			}
 		}
