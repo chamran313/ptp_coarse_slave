@@ -225,7 +225,7 @@ if( (ETH->PTPTSSR) & 0x2)
 			HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, 0);*/
 			HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_2);
 			
-			ETH->PTPTTLR = ETH->PTPTTLR + 200000000; //99ms
+			ETH->PTPTTLR = ETH->PTPTTLR + 50000000; //50ms
 			//if(ETH->PTPTTLR < 99000000 ) 	ETH->PTPTTHR = ETH->PTPTTHR +1;
 			
 			if(ETH->PTPTTLR > 999999999 )  // agar sarriz nemishe	
